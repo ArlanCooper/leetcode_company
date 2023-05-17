@@ -258,3 +258,47 @@ class Solution:
 
 ```
 
+## 面试题 02.05. 链表求和
+### 题目描述
+给定两个用链表表示的整数，每个节点包含一个数位。
+
+这些数位是反向存放的，也就是个位排在链表首部。
+
+编写函数对这两个整数求和，并用链表形式返回结果。
+
+### 示例
+```
+输入：(7 -> 1 -> 6) + (5 -> 9 -> 2)，即617 + 295
+输出：2 -> 1 -> 9，即912
+```
+
+
+### 解法
+```python
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+class Solution:
+    def addTwoNumbers(self, l1: ListNode, l2: ListNode) -> ListNode:
+        dummy = ListNode(-1)
+        cur = dummy
+        carry = 0
+        while l1 or l2 or carry:
+            t = carry
+            if l1:
+                t += l1.val
+                l1 = l1.next 
+            if l2:
+                t += l2.val 
+                l2 = l2.next
+            carry = t // 10
+            cur.next = ListNode(t % 10)
+            cur = cur.next
+
+        return dummy.next
+
+```
+
