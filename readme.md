@@ -492,3 +492,64 @@ class Solution:
         return dp0
 
 ```
+
+## 5. 最长回文子串
+### 题目描述
+给你一个字符串 s，找到 s 中最长的回文子串。
+
+如果字符串的反序与原始字符串相同，则该字符串称为回文字符串。
+
+### 示例
+```
+输入：s = "babad"
+输出："bab"
+解释："aba" 同样是符合题意的答案。
+```
+
+### 解题思路
+对于一个子串而言，如果它是回文串，并且长度大于 222，那么将它首尾的两个字母去除之后，它仍然是个回文串。例如对于字符串 “ababa”，如果我们已经知道 “bab”是回文串，那么 “ababa”一定是回文串，这是因为它的首尾两个字母都是 “a”。
+根据这样的思路，我们就可以用动态规划的方法解决本题。我们用 P(i,j)表示字符串s的第 i到 j个字母组成的串（下文表示成 s[i:j]）是否为回文串：
+最终的答案即为所有 P(i,j)=true 中 j−i+1即子串长度）的最大值。注意：在状态转移方程中，我们是从长度较短的字符串向长度较长的字符串进行转移的，因此一定要注意动态规划的循环顺序。
+
+### 解法
+```python
+
+class Solution:
+    def longestPalindrome(self, s: str) -> str:
+        n = len(s)
+        if n < 2:
+            return s
+        
+        max_len = 1
+        begin = 0
+        # dp[i][j] 表示 s[i..j] 是否是回文串
+        dp = [[False] * n for _ in range(n)]
+        for i in range(n):
+            dp[i][i] = True
+        
+        # 递推开始
+        # 先枚举子串长度
+        for L in range(2, n + 1):
+            # 枚举左边界，左边界的上限设置可以宽松一些
+            for i in range(n):
+                # 由 L 和 i 可以确定右边界，即 j - i + 1 = L 得
+                j = L + i - 1
+                # 如果右边界越界，就可以退出当前循环
+                if j >= n:
+                    break
+                    
+                if s[i] != s[j]:
+                    dp[i][j] = False 
+                else:
+                    if j - i < 3:
+                        dp[i][j] = True
+                    else:
+                        dp[i][j] = dp[i + 1][j - 1]
+                
+                # 只要 dp[i][L] == true 成立，就表示子串 s[i..L] 是回文，此时记录回文长度和起始位置
+                if dp[i][j] and j - i + 1 > max_len:
+                    max_len = j - i + 1
+                    begin = i
+        return s[begin:begin + max_len]
+
+```
